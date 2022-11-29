@@ -1,10 +1,11 @@
 BINARY_DIR = bin
 OBJECT_DIR = objects
 SOURCE_DIR = src
+SETUP_DIR = setup
 INCLUDE_DIR = src/include
 LIBRARY_DIR = lib
 
-all: client setup
+all:  setup_map_shared
 
 client: lib client.o
 	@echo "Edition de liens de client.o et la lib..."
@@ -22,15 +23,12 @@ lib.o: $(SOURCE_DIR)/lib.c $(INCLUDE_DIR)/lib.h
 	@echo "Compilation de la librairie..."
 	gcc -c $(SOURCE_DIR)/lib.c -o $(OBJECT_DIR)/lib.o 
 
-setup:
-	gcc -o bin/initialize initialize.c lib/libmap.c
-
-clean:
-	rm -f bin/*
+setup_map_shared:
+	gcc -o setup/initialize setup/initialize.c lib/libmap.c
 
 clean:
 	@echo "Suppression des binaires et fichiers objets..."
-	rm -rf $(BINARY_DIR)/* $(OBJECT_DIR)/* $(LIBRARY_DIR)/*
+	rm -rf $(BINARY_DIR)/* $(OBJECT_DIR)/* $(LIBRARY_DIR)/* $(SETUP_DIR)/*
 
 
 

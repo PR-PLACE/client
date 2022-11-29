@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "lib/libmap.h"
+#include "../lib/libmap.h"
 
 int main(int argc, char const *argv[])
 {
@@ -12,6 +12,6 @@ int main(int argc, char const *argv[])
             map[j][i] = BLANC;
         }
     }
-    exportMap(map, "map.bin");
+    exportMap(map, "../maps/map.bin");
     return 0;
 }

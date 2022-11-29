@@ -2,16 +2,19 @@
 
 # This script is used to setup the environment for the PR-PLACE
 
+echo "--------------------------------------------------------------------------------"
 echo "Setting up the environment for PR-PLACE"
-
+echo "--------------------------------------------------------------------------------"
 echo "Compiling sources..."
-make
+cd ../ && make setup_map_shared && cd setup
 echo 'Compiling done'
+echo "--------------------------------------------------------------------------------"
 
 # Running the script setup to create the white map and create the shared memory for clients
 echo "Running setup script..."
-./bin/initialize
+./initialize
 echo "Initial script done (Map and shared created)"
+echo "--------------------------------------------------------------------------------"
 
 echo "Setup script done"
 
