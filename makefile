@@ -23,7 +23,10 @@ lib.o: $(SOURCE_DIR)/lib.c $(INCLUDE_DIR)/lib.h
 	gcc -c $(SOURCE_DIR)/lib.c -o $(OBJECT_DIR)/lib.o 
 
 setup:
-	gcc -o bin/setup setup.c lib/libmap.c
+	gcc -o bin/initialize initialize.c lib/libmap.c
+
+clean:
+	rm -f bin/*
 
 clean:
 	@echo "Suppression des binaires et fichiers objets..."

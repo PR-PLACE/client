@@ -12,7 +12,6 @@ int main(int argc, char const *argv[])
             map[j][i] = BLANC;
         }
     }
-    printMap(map);
     exportMap(map, "map.bin");
     return 0;
 }
