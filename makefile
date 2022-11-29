@@ -4,7 +4,7 @@ SOURCE_DIR = src
 INCLUDE_DIR = src/include
 LIBRARY_DIR = lib
 
-all: client
+all: client setup
 
 client: lib client.o
 	@echo "Edition de liens de client.o et la lib..."
@@ -22,6 +22,13 @@ lib.o: $(SOURCE_DIR)/lib.c $(INCLUDE_DIR)/lib.h
 	@echo "Compilation de la librairie..."
 	gcc -c $(SOURCE_DIR)/lib.c -o $(OBJECT_DIR)/lib.o 
 
+setup:
+	gcc -o bin/setup setup.c lib/libmap.c
+
 clean:
 	@echo "Suppression des binaires et fichiers objets..."
 	rm -rf $(BINARY_DIR)/* $(OBJECT_DIR)/* $(LIBRARY_DIR)/*
+
+
+
+
