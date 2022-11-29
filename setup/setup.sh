@@ -10,6 +10,11 @@ cd ../ && make setup_map_shared && cd setup
 echo 'Compiling done'
 echo "--------------------------------------------------------------------------------"
 
+#Create the reference file for shared memory
+echo "Creating the reference file for shared memory..."
+touch ../pr-place-map
+echo "Reference file created"
+
 # Running the script setup to create the white map and create the shared memory for clients
 echo "Running setup script..."
 ./initialize
