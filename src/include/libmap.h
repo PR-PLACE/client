@@ -18,5 +18,7 @@ typedef enum
     ORANGE = 214,
 } color;
 
+void readMap(color map[HEIGHT][WIDTH]);
 void printMap(color map[HEIGHT][WIDTH]);
 void exportMap(color map[HEIGHT][WIDTH]);
+void printMap(color map[HEIGHT][WIDTH]);
