@@ -24,7 +24,7 @@ lib.o: $(SOURCE_DIR)/lib.c $(INCLUDE_DIR)/lib.h
 	gcc -c $(SOURCE_DIR)/lib.c -o $(OBJECT_DIR)/lib.o 
 
 setup_map_shared:
-	gcc -o setup/initialize setup/initialize.c lib/libmap.c
+	gcc -o $(SETUP_DIR)/initialize $(SETUP_DIR)/initialize.c $(SOURCE_DIR)/libmap.c
 
 clean:
 	@echo "Suppression des binaires et fichiers objets..."

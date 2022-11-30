@@ -2,6 +2,8 @@
 #define HEIGHT WIDTH
 #define NB_COLORS 10
 
+#define MAP_FILE_NAME "../maps/map.bin"
+
 typedef enum
 {
     BLEUE = 12,
@@ -17,4 +19,4 @@ typedef enum
 } color;
 
 void printMap(color map[HEIGHT][WIDTH]);
-void exportMap(color map[HEIGHT][WIDTH], char *filename);
+void exportMap(color map[HEIGHT][WIDTH]);

@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include "../src/include/types.h"
-#include "../lib/libmap.h"
+#include "../src/include/libmap.h"
 
 int main(int argc, char const *argv[])
 {
@@ -18,7 +18,7 @@ int main(int argc, char const *argv[])
             map[j][i] = BLANC;
         }
     }
-    exportMap(map, "../maps/map.bin");
+    exportMap(map);
 
     // Initialize the shared memory
 

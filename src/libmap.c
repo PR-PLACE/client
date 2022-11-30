@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "libmap.h"
+#include "./include/libmap.h"
 
 #define printColoredChar(color) (printf("\033[38;5;%dm██\033[0m", color))
 
@@ -42,9 +42,9 @@ void printMap(color map[HEIGHT][WIDTH])
     printColumNumber();
 }
 
-void exportMap(color map[HEIGHT][WIDTH], char *filename)
+void exportMap(color map[HEIGHT][WIDTH])
 {
-    FILE *file = fopen(filename, "wb");
+    FILE *file = fopen(MAP_FILE_NAME, "wb");
     if (file == NULL)
     {
         printf("Error opening file!\n");
@@ -56,7 +56,7 @@ void exportMap(color map[HEIGHT][WIDTH], char *filename)
 
 void readMap(color map[HEIGHT][WIDTH])
 {
-    FILE *file = fopen("map.bin", "rb");
+    FILE *file = fopen(MAP_FILE_NAME, "rb");
     if (file == NULL)
     {
         printf("Error opening file!\n");
