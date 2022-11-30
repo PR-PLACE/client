@@ -5,15 +5,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#define NB_CLIENT_MAX 100
 #define PROJECT_ID 12
-
-#define KEY_FILE_NAME "pr-place-shm"
-
-#define SHM_FLAG 0666
-
-#define COLUMNS_NUMBER 50
-#define ROWS_NUMBER 50
-
+#define SHM_FLAG 0666 | IPC_CREAT
 #define SHARED_MEMORY_FILE "../pr-place-shm"
 
 #define SEMAPHORE_NAME "/PR_PLACE"
@@ -22,7 +16,7 @@
 typedef struct client_list_t
 {
     int nb_client;
-    pid_t *client_list;
+    pid_t client_list[NB_CLIENT_MAX];
 } client_list_t;
 
 #define CHECK(sts, msg) \
