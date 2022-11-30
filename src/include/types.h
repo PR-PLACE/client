@@ -7,14 +7,10 @@
 
 #define PROJECT_ID 20
 
-#define KEY_FILE_NAME "pr-place-shm"
+#define KEY_FILE_NAME "pr-place.shm"
 
 #define SHM_FLAG 0666 | IPC_CREAT
 
-#define COLUMNS_NUMBER 50
-#define ROWS_NUMBER 50
-
-#define MAP_FILENAME "pr-place-map"
 #define NB_CLIENT_MAX 100
 
 typedef struct client_list_t
