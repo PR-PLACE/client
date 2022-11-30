@@ -60,11 +60,9 @@ void removeClient()
     {
         if (client_list->client_list[i] == pid)
         {
-            // décalage des clients
+            // shifting of clients
             for (char j = i; j < nb_client; j++)
-            {
                 client_list->client_list[j] = client_list->client_list[j + 1];
-            }
             client_list->nb_client -= 1;
             client_list->client_list[client_list->nb_client] = 0;
             break;
