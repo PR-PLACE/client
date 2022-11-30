@@ -10,7 +10,7 @@ int shmid;
 
 void loadShm()
 {
-    key = ftok(KEY_FILE_NAME, PROJECT_ID);
+    key = ftok(SHARED_MEMORY_FILE, PROJECT_ID);
     CHECK(key, "error ftok");
     shmid = shmget(key, sizeof(client_list_t), SHM_FLAG);
     CHECK(shmid, "error shmget");
