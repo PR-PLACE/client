@@ -8,7 +8,7 @@
 #define NB_CLIENT_MAX 100
 #define PROJECT_ID 12
 #define SHM_FLAG 0666 | IPC_CREAT
-#define SHARED_MEMORY_FILE "../pr-place-shm"
+#define SHARED_MEMORY_FILE "../pr-place.shm"
 
 #define SEMAPHORE_NAME "/PR_PLACE"
 #define SEMAPHORE_PERMISSIONS 0666

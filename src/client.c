@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "include/libclient.h"
+#include "include/libmap.h"
 #include "include/types.h"
 
 extern int shmid;
@@ -10,11 +11,11 @@ extern int shmid;
 int main(int argc, char **argv)
 {
     loadShm();
-    infoShm();
     addClient();
-    infoShm();
-    removeClient();
-    infoShm();
-    printf("shmid = %d\n", shmid);
+
+    color map[HEIGHT][WIDTH];
+    readMap(map);
+    printMap(map);
+
     return 0;
 }
