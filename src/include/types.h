@@ -14,7 +14,10 @@
 #define COLUMNS_NUMBER 50
 #define ROWS_NUMBER 50
 
-#define MAP_FILENAME "pr-place-map"
+#define SHARED_MEMORY_FILE "../pr-place-shm"
+
+#define SEMAPHORE_NAME "/PR_PLACE"
+#define SEMAPHORE_PERMISSIONS 0666
 
 typedef struct client_list_t
 {
