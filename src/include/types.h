@@ -7,7 +7,7 @@
 
 #define PROJECT_ID 20
 
-#define KEY_FILE_NAME "pr-place.shm"
+#define SHARED_MEMORY_FILE "../pr-place.shm"
 
 #define SHM_FLAG 0666 | IPC_CREAT
 
