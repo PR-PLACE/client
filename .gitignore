@@ -1,3 +1,7 @@
+.vscode
 bin/*
 lib/*
 objects/*
+maps
+setup/initialize
+pr-place.shm

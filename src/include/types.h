@@ -5,13 +5,13 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define PROJECT_ID 20
-
-#define SHARED_MEMORY_FILE "../pr-place.shm"
-
-#define SHM_FLAG 0666 | IPC_CREAT
-
 #define NB_CLIENT_MAX 100
+#define PROJECT_ID 12
+#define SHM_FLAG 0666 | IPC_CREAT
+#define SHARED_MEMORY_FILE "../pr-place-shm"
+
+#define SEMAPHORE_NAME "/PR_PLACE"
+#define SEMAPHORE_PERMISSIONS 0666
 
 typedef struct client_list_t
 {
