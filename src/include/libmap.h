@@ -4,6 +4,8 @@
 
 #define MAP_FILE_NAME "../maps/map.bin"
 
+#define printColoredChar(color) (printf("\033[38;5;%dm██\033[0m", color))
+
 typedef enum
 {
     BLEUE = 12,
@@ -18,7 +20,12 @@ typedef enum
     ORANGE = 214,
 } color;
 
-void readMap(color map[HEIGHT][WIDTH]);
-void printMap(color map[HEIGHT][WIDTH]);
-void exportMap(color map[HEIGHT][WIDTH]);
-void printMap(color map[HEIGHT][WIDTH]);
+static color colors[NB_COLORS] = {BLEUE, ROUGE, VERT, JAUNE, NOIR, BLANC, MAUVE, VIOLET, MARRON, ORANGE};
+
+typedef color map_t[HEIGHT][WIDTH];
+
+void readMap();
+void exportMap(map_t map);
+void printMap(map_t map);
+void drawMap();
+void placePixel(int x, int y, color newColor);
