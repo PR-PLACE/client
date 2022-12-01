@@ -34,7 +34,7 @@ void printColumNumber()
     printf("\n");
 }
 
-void printMap(color map[HEIGHT][WIDTH])
+void printMap(map_t map)
 {
     printColumNumber();
     for (int i = 0; i < HEIGHT; i++)
@@ -42,7 +42,28 @@ void printMap(color map[HEIGHT][WIDTH])
     printColumNumber();
 }
 
-void exportMap(color map[HEIGHT][WIDTH])
+void updateMap(map_t map, int x, int y, color newColor)
+{
+    map[y - 1][x - 1] = newColor;
+}
+
+void placePixel(int x, int y, color newColor)
+{
+    map_t map;
+    readMap(map);
+    updateMap(map, x, y, newColor);
+    exportMap(map);
+}
+
+void drawMap()
+{
+    system("clear");
+    map_t map;
+    readMap(map);
+    printMap(map);
+}
+
+void exportMap(map_t map)
 {
     FILE *file = fopen(MAP_FILE_NAME, "wb");
     if (file == NULL)
@@ -54,7 +75,7 @@ void exportMap(color map[HEIGHT][WIDTH])
     fclose(file);
 }
 
-void readMap(color map[HEIGHT][WIDTH])
+void readMap(map_t map)
 {
     FILE *file = fopen(MAP_FILE_NAME, "rb");
     if (file == NULL)

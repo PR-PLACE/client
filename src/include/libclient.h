@@ -1,5 +1,8 @@
 #ifndef INCLUDE_LIB
 #define INCLUDE_LIB 1
+void placePixelSequence();
+void setupSignalHandler();
+void handler(int sig_number);
 
 /**
  * Fonction permettant de charger la mémoire partagée
