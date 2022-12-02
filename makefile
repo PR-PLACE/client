@@ -29,5 +29,5 @@ setup_map_sem:
 	gcc -o $(SETUP_DIR)/initialize $(SETUP_DIR)/initialize.c $(SOURCE_DIR)/libmap.c -pthread
 
 clean:
-	@echo "Suppression des binaires et fichiers objets..."
+	@echo "Deleting all binaries, objects files and lib..."
 	rm -rf $(BINARY_DIR)/* $(OBJECT_DIR)/* $(LIBRARY_DIR)/* $(SETUP_DIR)/*

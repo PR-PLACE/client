@@ -4,22 +4,22 @@
 #include "libmap.h"
 
 /**
- * Fonction permettant de charger la mémoire partagée
+ * Function to load the shared memory
  */
 void loadShm();
 
 /**
- * Fonction permettant d'afficher les informations de la mémoire partagée
+ * Function to show shared memory information
  */
 void infoShm();
 
 /**
- * Fonction pour ajouter un client dans la mémoire partagée
+ * Function to add the current process as a client in the shared memory
  */
 void addClient();
 
 /**
- * Fonction quittant le client de la mémoire partagée
+ * Function removing the client from the shared memory
  */
 void removeClient();
 
