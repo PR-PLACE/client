@@ -4,12 +4,15 @@
 #include <stdlib.h>
 #include <sys/shm.h>
 #include <unistd.h>
+#include <string.h>
+#include "include/libmap.h"
 
 key_t key;
 int shmid;
 
 void loadShm()
 {
+    printf("filename : %s\n", SHARED_MEMORY_FILE);
     key = ftok(SHARED_MEMORY_FILE, PROJECT_ID);
     CHECK(key, "error ftok");
     shmid = shmget(key, sizeof(client_list_t), SHM_FLAG);
@@ -20,6 +23,7 @@ void loadShm()
 void infoShm()
 {
     struct shmid_ds buf;
+    printf("coucou\n");
     CHECK(shmctl(shmid, IPC_STAT, &buf), "error shmtclt");
     printf("-----------------------Shm information---------------\n");
     printf("Shmid : %d\n", shmid);
@@ -69,4 +73,82 @@ void removeClient()
         }
     }
     return;
+}
+
+pixel_t enterPixel()
+{
+    int choice;
+    pixel_t *pixel = malloc(sizeof(pixel_t));
+
+    printf("------Enter a pixel------\n");
+    printf("Abscissa : ");
+    pixel->abscissa = readNumber();
+    if (pixel->abscissa == -1)
+    {
+        pixel->ordinate = -1;
+        return *pixel;
+    }
+
+    printf("Ordinate : ");
+    pixel->ordinate = readNumber();
+    if (pixel->ordinate == -1)
+    {
+        pixel->abscissa = -1;
+        return *pixel;
+    }
+
+    _testPixelCoord(&pixel);
+
+    printf("Choose a color from : ");
+    for (char i = 0; i < COLOR_NUMBER; i++)
+    {
+        printf("%d-", colors[i]);
+        printColoredChar(colors[i]);
+        printf(" ");
+    }
+    printf("\nColor chosen : ");
+    scanf("%d", &choice);
+    pixel->color = (color)choice;
+    if (!isColor(pixel->color))
+    {
+        // we set a default value
+        pixel->color = ORANGE;
+    }
+    return *pixel;
+}
+
+void _testPixelCoord(pixel_t **pixel)
+{
+    // Test the ordinate
+    if ((*pixel)->ordinate > HEIGHT)
+        (*pixel)->ordinate = HEIGHT;
+    else if ((*pixel)->ordinate < 1)
+        (*pixel)->ordinate = 1;
+    // Test the abscissa
+    if ((*pixel)->abscissa > WIDTH)
+        (*pixel)->abscissa = WIDTH;
+    else if ((*pixel)->abscissa < 1)
+        (*pixel)->abscissa = 1;
+    return;
+}
+
+int readNumber()
+{
+    char carac = ' ';
+    char string_length = 1;
+    char *number_as_string = (char *)malloc(sizeof(char));
+    *number_as_string = '\0';
+    while (carac != 27 && carac != '\n')
+    {
+        carac = getchar();
+        string_length++;
+        number_as_string = realloc(number_as_string, string_length * sizeof(char));
+        number_as_string[string_length - 2] = carac;
+        number_as_string[string_length - 1] = '\0';
+    }
+    fflush(stdin);
+    if (carac == 27)
+        return -1;
+    else
+        return atoi(number_as_string);
 }

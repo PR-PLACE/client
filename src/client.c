@@ -13,9 +13,15 @@ int main(int argc, char **argv)
     loadShm();
     addClient();
 
-    color map[HEIGHT][WIDTH];
-    readMap(map);
-    printMap(map);
+    // color map[HEIGHT][WIDTH];
+    // readMap(map);
+    // printMap(map);
 
+    pixel_t pixel = enterPixel();
+    printf("pixel entered : x = %d, y = %d\n", pixel.abscissa, pixel.ordinate);
+    // infoShm();
+    removeClient();
+    // infoShm();
+    printf("shmid = %d\n", shmid);
     return 0;
 }
