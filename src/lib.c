@@ -12,14 +12,14 @@ int shmid;
 
 void placePixelSequence()
 {
-    int x, y;
+    pixel_t *pixel = (pixel_t *)malloc(sizeof(pixel_t));
     color newColor;
     printf("Enter the column of the pixel to place : ");
-    scanf("%d", &x);
+    scanf("%d", &(pixel->abscissa));
     printf("Enter the line of the pixel to place : ");
-    scanf("%d", &y);
+    scanf("%d", &(pixel->ordinate));
     drawMap();
-    printf("Saisir la couleur  => ");
+    printf("Enter the color => ");
     for (int i = 0; i < NB_COLORS; i++)
     {
         printf("%d:", i + 1);
@@ -28,7 +28,8 @@ void placePixelSequence()
     }
     printf(" : ");
     scanf("%d", &newColor);
-    placePixel(x, y, colors[newColor - 1]);
+    pixel->color = colors[newColor - 1];
+    placePixel(*pixel);
     drawMap();
 }
 

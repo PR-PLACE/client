@@ -42,16 +42,16 @@ void printMap(map_t map)
     printColumNumber();
 }
 
-void updateMap(map_t map, int x, int y, color newColor)
+void updateMap(map_t map, pixel_t pixel)
 {
-    map[y - 1][x - 1] = newColor;
+    map[pixel.ordinate - 1][pixel.abscissa - 1] = pixel.color;
 }
 
-void placePixel(int x, int y, color newColor)
+void placePixel(pixel_t pixel)
 {
     map_t map;
     readMap(map);
-    updateMap(map, x, y, newColor);
+    updateMap(map, pixel);
     exportMap(map);
 }
 

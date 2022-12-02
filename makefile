@@ -37,4 +37,4 @@ setup_map_sem:
 
 clean:
 	@echo "Suppression des binaires et fichiers objets..."
-	rm -rf $(BINARY_DIR)/* $(OBJECT_DIR)/* $(LIBRARY_DIR)/* $(SETUP_DIR)/*
+	rm -rf $(BINARY_DIR)/* $(OBJECT_DIR)/* $(LIBRARY_DIR)/* $(SETUP_DIR)/initialize

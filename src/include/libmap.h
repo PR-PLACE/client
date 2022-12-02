@@ -20,12 +20,43 @@ typedef enum
     ORANGE = 214,
 } color;
 
+typedef struct pixel_t
+{
+    int abscissa;
+    int ordinate;
+    color color;
+} pixel_t;
+
 static color colors[NB_COLORS] = {BLEUE, ROUGE, VERT, JAUNE, NOIR, BLANC, MAUVE, VIOLET, MARRON, ORANGE};
 
 typedef color map_t[HEIGHT][WIDTH];
 
+/**
+ * Function to read the binary file where the map is stored
+ */
 void readMap();
+
+/**
+ * Export a new map in the binary file
+ */
 void exportMap(map_t map);
+
+/**
+ * Display the map in the terminal
+ */
 void printMap(map_t map);
+
+/**
+ * Clear the terminal, and read the map to display it
+ */
 void drawMap();
-void placePixel(int x, int y, color newColor);
+
+/**
+ * Place a pixel in the map and export it
+ */
+void placePixel(pixel_t pixel);
+
+/**
+ * Modify a pixel within the map
+ */
+void updateMap(map_t map, pixel_t pixel);
