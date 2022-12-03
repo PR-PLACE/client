@@ -6,11 +6,8 @@ INCLUDE_DIR = src/include
 LIBRARY_DIR = lib
 # FLAGS = -Wall
 
-all: init setup_map_sem client
+all: setup_map_sem client
 
-init:
-	rm -rf ./maps ./bin ./objects ./lib
-	cd setup && ./setup.sh
 
 client: libmap libclient client.o
 	@echo "Link libs and client"
