@@ -13,28 +13,6 @@
 key_t key;
 int shmid;
 
-void placePixelSequence()
-{
-    int x, y;
-    color newColor;
-    printf("Enter the column of the pixel to place : ");
-    scanf("%d", &x);
-    printf("Enter the line of the pixel to place : ");
-    scanf("%d", &y);
-    drawMap();
-    printf("Saisir la couleur  => ");
-    for (int i = 0; i < NB_COLORS; i++)
-    {
-        printf("%d:", i + 1);
-        printColoredChar(colors[i]);
-        printf(" ");
-    }
-    printf(" : ");
-    scanf("%d", &newColor);
-    placePixel(x, y, colors[newColor - 1]);
-    drawMap();
-}
-
 // Signal handling
 
 void setupSignalHandler()

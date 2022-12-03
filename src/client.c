@@ -13,9 +13,7 @@ int main(int argc, char **argv)
     loadShm();
     addClient();
 
-    // color map[HEIGHT][WIDTH];
-    // readMap(map);
-    // printMap(map);
+    drawMap();
 
     pixel_t pixel = enterPixel();
     printf("pixel entered : x = %d, y = %d, color : %d\n", pixel.abscissa, pixel.ordinate, pixel.color);

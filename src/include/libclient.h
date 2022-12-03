@@ -1,5 +1,4 @@
-#ifndef INCLUDE_LIBCLIENT
-#define INCLUDE_LIBCLIENT 1
+
 
 #include "libmap.h"
 #ifndef INCLUDE_LIB

@@ -34,9 +34,12 @@ typedef struct pixel_t
 #define COLOR_NUMBER 10
 
 static color colors[COLOR_NUMBER] = {BLEUE, ROUGE, VERT, JAUNE, NOIR, BLANC, MAUVE, VIOLET, MARRON, ORANGE};
+typedef color map_t[HEIGHT][WIDTH];
 
 void readMap(color map[HEIGHT][WIDTH]);
 void printMap(color map[HEIGHT][WIDTH]);
+void drawMap();
+void placePixel(int x, int y, color newColor);
 void exportMap(color map[HEIGHT][WIDTH]);
 int isColor(color color);
 

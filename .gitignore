@@ -2,6 +2,6 @@
 bin/*
 lib/*
 objects/*
-maps
+maps/*
 setup/initialize
 pr-place.shm
