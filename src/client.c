@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
+
 #include "include/libclient.h"
 #include "include/libmap.h"
 #include "include/types.h"
@@ -12,14 +13,15 @@ int main(int argc, char **argv)
 {
     loadShm();
     addClient();
+    setupSignalHandler();
+    setupThread();
+    setupMap();
+    for (;;)
+    {   
+        createThreadPixel();
+        waitForThreadPixel();
+        
+    }
 
-    drawMap();
-
-    pixel_t pixel = enterPixel();
-    printf("pixel entered : x = %d, y = %d, color : %d\n", pixel.abscissa, pixel.ordinate, pixel.color);
-    // infoShm();
-    removeClient();
-    // infoShm();
-    printf("shmid = %d\n", shmid);
     return 0;
 }

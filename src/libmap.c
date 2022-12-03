@@ -3,16 +3,7 @@
 #include <time.h>
 #include "./include/libmap.h"
 
-void printLine(color pixels[WIDTH], int lineNumber)
-{
-    printf("\033[1;38;5;8m %d", lineNumber);
-    if (lineNumber < 10)
-        printf(" ");
-    for (int i = 0; i < WIDTH; i++)
-        printColoredChar(pixels[i]);
-    printf("\033[1;38;5;8m %d", lineNumber);
-    printf("\n");
-}
+
 // get random color of the enum
 
 color getRandomColor()
@@ -29,35 +20,44 @@ void printColumNumber()
             printf(" ");
         printf("%d", i);
     }
-    printf("\n");
+    printf("\033[0m\n");
 }
 
-void printMap(map_t map)
-{
-    printColumNumber();
-    for (int i = 0; i < HEIGHT; i++)
-        printLine(map[i], i + 1);
-    printColumNumber();
-}
+
 
 void updateMap(map_t map, int x, int y, color newColor)
 {
     map[y - 1][x - 1] = newColor;
 }
 
-void placePixel(int x, int y, color newColor)
+void placePixel(pixel_t *pixel, map_t map)
 {
-    map_t map;
-    readMap(map);
-    updateMap(map, x, y, newColor);
+    updateMap(map, pixel->abscissa, pixel->ordinate, pixel->color);
     exportMap(map);
 }
 
-void drawMap()
+void printLine(color pixels[WIDTH], int lineNumber)
+{
+    printf("\033[1;38;5;8m %d\033[0m", lineNumber);
+    if (lineNumber < 10)
+        printf(" ");
+    for (int i = 0; i < WIDTH; i++)
+        printColoredChar(pixels[i]);
+    printf("\033[1;38;5;8m %d\033[0m", lineNumber);
+    printf("\n");
+}
+
+void printMap(map_t *map)
+{
+    printColumNumber();
+    for (int i = 0; i < HEIGHT; i++)
+        printLine((*map)[i], i + 1);
+    printColumNumber();
+}
+
+void drawMap(map_t *map)
 {
     system("clear");
-    map_t map;
-    readMap(map);
     printMap(map);
 }
 
@@ -73,7 +73,7 @@ void exportMap(map_t map)
     fclose(file);
 }
 
-void readMap(map_t map)
+void readMap(map_t *map)
 {
     FILE *file = fopen(MAP_FILE_NAME, "rb");
     if (file == NULL)
@@ -88,9 +88,8 @@ void readMap(map_t map)
 int isColor(color color)
 {
     for (char i = 0; i < COLOR_NUMBER; i++)
-    {
         if (color == colors[i])
             return 1;
-    }
+    
     return 0;
 }

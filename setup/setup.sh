@@ -14,6 +14,7 @@ echo "--------------------------------------------------------------------------
 echo "Setting up the environment for PR-PLACE"
 echo "--------------------------------------------------------------------------------"
 echo "Compiling sources..."
+mkdir -p ../bin ../objects ../lib ../maps ../logs
 cd ../ && make setup_map_sem && cd setup
 echo 'Compiling done'
 echo "--------------------------------------------------------------------------------"

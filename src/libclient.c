@@ -2,6 +2,8 @@
 #include "include/libmap.h"
 #include "include/types.h"
 #include <stdio.h>
+#include <pthread.h>
+
 #include <stdlib.h>
 #include <sys/shm.h>
 #include <signal.h>
@@ -13,12 +15,32 @@
 key_t key;
 int shmid;
 
+char isTimerRunning = 0;
+char isPlacingPixel = 0;
+
+map_t *map;
+
+
+pthread_mutex_t mutexForTimer = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutexForPixel = PTHREAD_MUTEX_INITIALIZER;
+
+//Create a cond wait
+pthread_cond_t condForTimer = PTHREAD_COND_INITIALIZER;
+pthread_cond_t condForPixel = PTHREAD_COND_INITIALIZER;
+pthread_t threadTimer;
+pthread_t threadPixel;
+
+void setupMap(){
+    map = (map_t *)malloc(sizeof(map_t));
+    readMap(map);
+
+}
+
 // Signal handling
 
 void setupSignalHandler()
 {
     struct sigaction newact;
-
     sigemptyset(&newact.sa_mask);
     newact.sa_flags = 0;
 
@@ -35,12 +57,13 @@ void handler(int sig_number)
     {
     case SIGUSR1:
         printf("Received SIGUSR1 to update the map\n");
-        sleep(4);
-        drawMap();
+        readMap(map);
+        if(isTimerRunning == 0 && isPlacingPixel == 0){
+            pthread_cancel(threadPixel);
+        }
         break;
     case SIGTERM:
     case SIGINT:
-        printf("Received SIGINT to exit\n");
         removeClient();
         exit(0);
         break;
@@ -48,7 +71,74 @@ void handler(int sig_number)
         break;
     }
 }
+
+
+void broadCastUpdate(){
+    client_list_t *client_list = (client_list_t *)shmat(shmid, NULL, SHM_FLAG);
+    int nb_client = client_list->nb_client;
+    printf("nb_client : %d\n", nb_client);
+    for (char i = 0; i < nb_client; i++)
+    {
+        kill(client_list->client_list[i], SIGUSR1);
+    }
+    shmdt(client_list);
+}
+
 //--------------------------------------------------------------------------------------------
+
+
+void *placePixelThread(void *arg)
+{
+
+    drawMap(map);
+    placePixelSequence();
+    pthread_exit(NULL);
+}
+void createThreadPixel(){
+    isPlacingPixel = 0;
+    pthread_create(&threadPixel, NULL, &placePixelThread, NULL);
+}
+
+void waitForThreadPixel(){
+    pthread_join(threadPixel, NULL);
+}
+
+
+/*
+Thread function of cooldown timer after placed pixel
+*/
+void *cooldownTimer(void *arg)
+{
+   while (!pthread_cond_wait(&condForTimer, &mutexForTimer))
+    {
+        isTimerRunning = 1;
+        for (int timer = 10; timer > 0; timer--)
+        {
+            drawMap(map);
+            PRINT_TABS(5);
+            printf("\033[1;38;5;%dmCooldown: %d\033[0m\n", GREEN, timer);
+            sleep(1);
+        }
+        isTimerRunning = 0;
+        pthread_cond_signal(&condForPixel);
+    }
+}
+
+void setupThread()
+{
+    CHECK(pthread_create(&threadTimer, NULL, &cooldownTimer, NULL), "Error creating thread");
+}
+
+void placePixelSequence()
+{
+    pixel_t pixel;
+    do pixel = enterPixel();
+    while (pixel.abscissa == -1 && pixel.ordinate == -1);
+    placePixel(&pixel, *map);
+    pthread_cond_signal(&condForTimer);
+    broadCastUpdate();
+    pthread_cond_wait(&condForPixel, &mutexForPixel);
+}
 
 void loadShm()
 {
@@ -63,7 +153,6 @@ void loadShm()
 void infoShm()
 {
     struct shmid_ds buf;
-    printf("coucou\n");
     CHECK(shmctl(shmid, IPC_STAT, &buf), "error shmtclt");
     printf("-----------------------Shm information---------------\n");
     printf("Shmid : %d\n", shmid);
@@ -119,17 +208,22 @@ pixel_t enterPixel()
 {
     int choice;
     pixel_t *pixel = malloc(sizeof(pixel_t));
-
-    printf("------Enter a pixel------\n");
-    printf("Abscissa : ");
+    client_list_t *client_list = (client_list_t *)shmat(shmid, NULL, SHM_FLAG);
+    int nb_client = client_list->nb_client;
+    PRINT_TABS(1);
+    printf("\033[1;38;5;%dmPlayers online\033[0m -> %d\n", PURPLE,nb_client);
+    PRINT_TABS(4);
+    printf("\033[1;38;5;%dm------Enter a pixel------\033[0m\n",ORANGE);
+    PRINT_TABS(1);
+    PRINTF_COLOR("Column : ", GREEN);
     pixel->abscissa = readNumber();
     if (pixel->abscissa == -1)
     {
         pixel->ordinate = -1;
         return *pixel;
     }
-
-    printf("Ordinate : ");
+    PRINT_TABS(1);
+    PRINTF_COLOR("LINE : ", GREEN);
     pixel->ordinate = readNumber();
     if (pixel->ordinate == -1)
     {
@@ -138,17 +232,20 @@ pixel_t enterPixel()
     }
 
     _testPixelCoord(&pixel);
-
-    printf("Choose a color from : ");
+    PRINT_TABS(2);
+    PRINTF_COLOR("Colors : ", 8);
     for (char i = 0; i < COLOR_NUMBER; i++)
     {
-        printf("%d-", colors[i]);
+        printf("%d-", i);
         printColoredChar(colors[i]);
         printf(" ");
     }
-    printf("\nColor chosen : ");
+    printf("\n");
+    PRINT_TABS(1);
+    printf("Color: ");
     scanf("%d", &choice);
-    pixel->color = (color)choice;
+    getchar();
+    pixel->color = colors[choice];
     if (!isColor(pixel->color))
     {
         // we set a default value
@@ -175,24 +272,24 @@ void _testPixelCoord(pixel_t **pixel)
 int readNumber()
 {
     char number1;
-    char number2;
+    char number2;    
+
     number1 = getchar();
+    isPlacingPixel = 1;
     if(number1 == 27){
         getchar();
         return -1;
     }       
-    else
+    else{
         number2 = getchar();
-        // Make the buffer empty
-
         if(number2 == 27)
             return -1;
         else if(number2 == '\n')
             return number1 - '0';
         else{
-            while (getchar() != '\n') // Make the buffer empty in case of a wrong input
-            ;
+            getchar();
             int number = (number1 - '0') * 10 + (number2 - '0');
             return number;
         }
+    }
 }

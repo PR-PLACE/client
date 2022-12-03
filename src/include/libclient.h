@@ -1,10 +1,17 @@
 
-
 #include "libmap.h"
 #ifndef INCLUDE_LIB
 #define INCLUDE_LIB 1
-void placePixelSequence();
+
+
 void setupSignalHandler();
+void setupMap();
+void setupThread();
+
+void createThreadPixel();
+void waitForThreadPixel();
+void placePixelSequence();
+
 void handler(int sig_number);
 
 /**
