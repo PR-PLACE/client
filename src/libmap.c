@@ -88,7 +88,7 @@ void readMap(map_t map)
 
 int isColor(color color)
 {
-    for (int i = 0; i < COLOR_NUMBER; i++)
+    for (int i = 0; i < NB_COLORS; i++)
     {
         if (color == colors[i])
             return 1;

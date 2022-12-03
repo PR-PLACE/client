@@ -141,7 +141,7 @@ pixel_t enterPixel()
     _testPixelCoord(&pixel);
 
     printf("Choose a color from : ");
-    for (int i = 0; i < COLOR_NUMBER; i++)
+    for (int i = 0; i < NB_COLORS; i++)
     {
         printf("%d-", colors[i]);
         printColoredChar(colors[i]);
