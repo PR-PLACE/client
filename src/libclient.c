@@ -144,12 +144,15 @@ int readNumber()
     }       
     else
         number2 = getchar();
+        // Make the buffer empty
+
         if(number2 == 27)
             return -1;
         else if(number2 == '\n')
             return number1 - '0';
         else{
-            getchar();
+            while (getchar() != '\n') // Make the buffer empty in case of a wrong input
+            ;
             int number = (number1 - '0') * 10 + (number2 - '0');
             return number;
         }
