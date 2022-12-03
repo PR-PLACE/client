@@ -12,13 +12,16 @@ int main(int argc, char **argv)
 {
     loadShm();
     addClient();
-    setupSignalHandler();
-    printf("My pid is %d\n", getpid());
-    // placePixel(15, 15, ROUGE);
-    drawMap();
-    while (1)
-    {
-        placePixelSequence();
-    }
+
+    // color map[HEIGHT][WIDTH];
+    // readMap(map);
+    // printMap(map);
+
+    pixel_t pixel = enterPixel();
+    printf("pixel entered : x = %d, y = %d, color : %d\n", pixel.abscissa, pixel.ordinate, pixel.color);
+    // infoShm();
+    removeClient();
+    // infoShm();
+    printf("shmid = %d\n", shmid);
     return 0;
 }

@@ -3,8 +3,6 @@
 #include <time.h>
 #include "./include/libmap.h"
 
-#define printColoredChar(color) (printf("\033[38;5;%dm██\033[0m", color))
-
 void printLine(color pixels[WIDTH], int lineNumber)
 {
     printf("\033[1;38;5;8m %d", lineNumber);
@@ -85,4 +83,14 @@ void readMap(map_t map)
     }
     fread(map, sizeof(color), WIDTH * HEIGHT, file);
     fclose(file);
+}
+
+int isColor(color color)
+{
+    for (char i = 0; i < COLOR_NUMBER; i++)
+    {
+        if (color == colors[i])
+            return 1;
+    }
+    return 0;
 }

@@ -11,12 +11,12 @@ init:
 	rm -rf ./maps/map.bin
 	cd setup && ./setup.sh
 
-client: libmap lib client.o
-	@echo "Edition de liens de client.o et la lib..."
+client: libmap libclient client.o
+	@echo "Link libs and client"
 	gcc $(OBJECT_DIR)/client.o -lclient -lmap -L $(LIBRARY_DIR) -lpthread -o $(BINARY_DIR)/exe
 
 client.o: $(SOURCE_DIR)/client.c $(INCLUDE_DIR)/types.h $(INCLUDE_DIR)/libclient.h
-	@echo "Compilation du programme client..."
+	@echo "Compiling client program..."
 	gcc -c $(SOURCE_DIR)/client.c -o $(OBJECT_DIR)/client.o
 
 libmap: $(SOURCE_DIR)/libmap.c $(INCLUDE_DIR)/types.h $(INCLUDE_DIR)/libmap.h
@@ -24,17 +24,14 @@ libmap: $(SOURCE_DIR)/libmap.c $(INCLUDE_DIR)/types.h $(INCLUDE_DIR)/libmap.h
 	gcc -c $(SOURCE_DIR)/libmap.c -o $(OBJECT_DIR)/libmap.o
 	ar rv $(LIBRARY_DIR)/libmap.a $(OBJECT_DIR)/libmap.o
 
-lib: lib.o
-	@echo "Création de l'archive..."
-	ar rv $(LIBRARY_DIR)/libclient.a $(OBJECT_DIR)/lib.o 
-
-lib.o: $(SOURCE_DIR)/lib.c $(INCLUDE_DIR)/libclient.h $(INCLUDE_DIR)/types.h
-	@echo "Compilation de la librairie..."
-	gcc -c $(SOURCE_DIR)/lib.c -o $(OBJECT_DIR)/lib.o 
+libclient: $(SOURCE_DIR)/libclient.c $(INCLUDE_DIR)/libclient.h $(INCLUDE_DIR)/types.h
+	@echo "Compiling client lib..."
+	gcc -c $(SOURCE_DIR)/libclient.c -o $(OBJECT_DIR)/libclient.o 
+	ar rv $(LIBRARY_DIR)/libclient.a $(OBJECT_DIR)/libclient.o 
 
 setup_map_sem:
 	gcc -o $(SETUP_DIR)/initialize $(SETUP_DIR)/initialize.c $(SOURCE_DIR)/libmap.c -pthread
 
 clean:
-	@echo "Suppression des binaires et fichiers objets..."
+	@echo "Deleting all binaries, objects files and lib..."
 	rm -rf $(BINARY_DIR)/* $(OBJECT_DIR)/* $(LIBRARY_DIR)/* $(SETUP_DIR)/*
