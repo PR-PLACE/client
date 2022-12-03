@@ -2,6 +2,11 @@
 #define INCLUDE_LIBCLIENT 1
 
 #include "libmap.h"
+#ifndef INCLUDE_LIB
+#define INCLUDE_LIB 1
+void placePixelSequence();
+void setupSignalHandler();
+void handler(int sig_number);
 
 /**
  * Function to load the shared memory

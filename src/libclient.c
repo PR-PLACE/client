@@ -1,8 +1,10 @@
 #include "include/libclient.h"
+#include "include/libmap.h"
 #include "include/types.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/shm.h>
+#include <signal.h>
 #include <unistd.h>
 #include <string.h>
 #include "include/libmap.h"
@@ -10,6 +12,65 @@
 
 key_t key;
 int shmid;
+
+void placePixelSequence()
+{
+    int x, y;
+    color newColor;
+    printf("Enter the column of the pixel to place : ");
+    scanf("%d", &x);
+    printf("Enter the line of the pixel to place : ");
+    scanf("%d", &y);
+    drawMap();
+    printf("Saisir la couleur  => ");
+    for (int i = 0; i < NB_COLORS; i++)
+    {
+        printf("%d:", i + 1);
+        printColoredChar(colors[i]);
+        printf(" ");
+    }
+    printf(" : ");
+    scanf("%d", &newColor);
+    placePixel(x, y, colors[newColor - 1]);
+    drawMap();
+}
+
+// Signal handling
+
+void setupSignalHandler()
+{
+    struct sigaction newact;
+
+    sigemptyset(&newact.sa_mask);
+    newact.sa_flags = 0;
+
+    newact.sa_handler = handler;
+
+    CHECK(sigaction(SIGUSR1, &newact, NULL), "Error setting up signal handler for SIGUSR1");
+    CHECK(sigaction(SIGINT, &newact, NULL), "Error setting up signal handler for SIGINT");
+    CHECK(sigaction(SIGTERM, &newact, NULL), "Error setting up signal handler for SIGTERM");
+}
+
+void handler(int sig_number)
+{
+    switch (sig_number)
+    {
+    case SIGUSR1:
+        printf("Received SIGUSR1 to update the map\n");
+        sleep(4);
+        drawMap();
+        break;
+    case SIGTERM:
+    case SIGINT:
+        printf("Received SIGINT to exit\n");
+        removeClient();
+        exit(0);
+        break;
+    default:
+        break;
+    }
+}
+//--------------------------------------------------------------------------------------------
 
 void loadShm()
 {

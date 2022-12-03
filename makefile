@@ -5,7 +5,11 @@ SETUP_DIR = setup
 INCLUDE_DIR = src/include
 LIBRARY_DIR = lib
 
-all:  setup_map_sem client
+all: init client
+
+init:
+	rm -rf ./maps/map.bin
+	cd setup && ./setup.sh
 
 client: libmap libclient client.o
 	@echo "Link libs and client"

@@ -8,6 +8,8 @@
 #define MAP_FILE_NAME "../maps/map.bin"
 #define printColoredChar(color) (printf("\033[38;5;%dm██\033[0m", color))
 
+#define printColoredChar(color) (printf("\033[38;5;%dm██\033[0m", color))
+
 typedef enum
 {
     BLEUE = 12,
