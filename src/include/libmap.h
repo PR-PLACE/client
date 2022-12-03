@@ -39,7 +39,8 @@ typedef color map_t[HEIGHT][WIDTH];
 void readMap(color map[HEIGHT][WIDTH]);
 void printMap(color map[HEIGHT][WIDTH]);
 void drawMap();
-void placePixel(int x, int y, color newColor);
+void updateMap(map_t map, pixel_t pixel);
+void placePixel(pixel_t pixel);
 void exportMap(color map[HEIGHT][WIDTH]);
 int isColor(color color);
 

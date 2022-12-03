@@ -54,4 +54,3 @@ echo "--------------------------------------------------------------------------
 echo "Setup script done"
 
 echo "You can now use the exectuable ./bin/prplace to run the PR-PLACE"
-

@@ -40,16 +40,17 @@ void printMap(map_t map)
     printColumNumber();
 }
 
-void updateMap(map_t map, int x, int y, color newColor)
+void updateMap(map_t map, pixel_t pixel)
 {
-    map[y - 1][x - 1] = newColor;
+    printf("on veut ajouter le pixel à x = %d, y = %d\n", pixel.abscissa, pixel.ordinate);
+    map[pixel.ordinate - 1][pixel.abscissa - 1] = pixel.color;
 }
 
-void placePixel(int x, int y, color newColor)
+void placePixel(pixel_t pixel)
 {
     map_t map;
     readMap(map);
-    updateMap(map, x, y, newColor);
+    updateMap(map, pixel);
     exportMap(map);
 }
 
@@ -87,7 +88,7 @@ void readMap(map_t map)
 
 int isColor(color color)
 {
-    for (char i = 0; i < COLOR_NUMBER; i++)
+    for (int i = 0; i < COLOR_NUMBER; i++)
     {
         if (color == colors[i])
             return 1;

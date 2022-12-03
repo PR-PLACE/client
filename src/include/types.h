@@ -13,6 +13,8 @@
 #define SEMAPHORE_NAME "/PR_PLACE"
 #define SEMAPHORE_PERMISSIONS 0666
 
+#define TIMER 5
+
 typedef struct client_list_t
 {
     int nb_client;

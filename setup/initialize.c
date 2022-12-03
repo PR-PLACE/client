@@ -23,8 +23,7 @@ int main(int argc, char const *argv[])
     exportMap(map);
 
     // Initialize the named semaphore
-    sem_t *sem;
-    sem = sem_open(SEMAPHORE_NAME, O_CREAT, SEMAPHORE_PERMISSIONS, 1);
+    sem_open(SEMAPHORE_NAME, O_CREAT, SEMAPHORE_PERMISSIONS, 1);
 
     return 0;
 }

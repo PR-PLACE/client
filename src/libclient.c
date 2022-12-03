@@ -5,13 +5,14 @@
 #include <stdlib.h>
 #include <sys/shm.h>
 #include <signal.h>
+#include <pthread.h>
 #include <unistd.h>
 #include <string.h>
-#include "include/libmap.h"
-
+#include <time.h>
 
 key_t key;
 int shmid;
+pthread_mutex_t mutex_timer = PTHREAD_MUTEX_INITIALIZER;
 
 // Signal handling
 
@@ -76,7 +77,7 @@ void infoShm()
 
     client_list_t *client_list = (client_list_t *)shmat(shmid, NULL, SHM_FLAG);
     printf("Number of clients : %d \n", client_list->nb_client);
-    for (char i = 0; i < client_list->nb_client; i++)
+    for (int i = 0; i < client_list->nb_client; i++)
     {
         printf("Client : %d\n", client_list->client_list[i]);
     }
@@ -100,12 +101,12 @@ void removeClient()
     client_list_t *client_list = (client_list_t *)shmat(shmid, NULL, SHM_FLAG);
     int nb_client = client_list->nb_client;
 
-    for (char i = 0; i < nb_client; i++)
+    for (int i = 0; i < nb_client; i++)
     {
         if (client_list->client_list[i] == pid)
         {
             // shifting of clients
-            for (char j = i; j < nb_client; j++)
+            for (int j = i; j < nb_client; j++)
                 client_list->client_list[j] = client_list->client_list[j + 1];
             client_list->nb_client -= 1;
             client_list->client_list[client_list->nb_client] = 0;
@@ -140,7 +141,7 @@ pixel_t enterPixel()
     _testPixelCoord(&pixel);
 
     printf("Choose a color from : ");
-    for (char i = 0; i < COLOR_NUMBER; i++)
+    for (int i = 0; i < COLOR_NUMBER; i++)
     {
         printf("%d-", colors[i]);
         printColoredChar(colors[i]);
@@ -177,22 +178,51 @@ int readNumber()
     char number1;
     char number2;
     number1 = getchar();
-    if(number1 == 27){
+    if (number1 == 27)
+    {
         getchar();
         return -1;
-    }       
+    }
     else
         number2 = getchar();
-        // Make the buffer empty
+    // Make the buffer empty
 
-        if(number2 == 27)
-            return -1;
-        else if(number2 == '\n')
-            return number1 - '0';
-        else{
-            while (getchar() != '\n') // Make the buffer empty in case of a wrong input
+    if (number2 == 27)
+        return -1;
+    else if (number2 == '\n')
+        return number1 - '0';
+    else
+    {
+        while (getchar() != '\n') // Make the buffer empty in case of a wrong input
             ;
-            int number = (number1 - '0') * 10 + (number2 - '0');
-            return number;
+        int number = (number1 - '0') * 10 + (number2 - '0');
+        return number;
+    }
+}
+
+pthread_t createTimer()
+{
+    pthread_t *thread_timer = (pthread_t *)malloc(sizeof(pthread_t));
+    CHECK(pthread_create(thread_timer, NULL, &_threadTimer, (void *)TIMER), "error when creating the thread");
+
+    return *thread_timer;
+}
+
+void *_threadTimer(void *arg)
+{
+    int timer = (int)arg;
+    sleep(1);
+    while (1)
+    {
+        pthread_mutex_lock(&mutex_timer);
+        for (int i = timer; i > 0; i--)
+        {
+            drawMap();
+            printf("\nRemaining time : [ %d s]\n", i);
+            sleep(1);
         }
+        pthread_mutex_unlock(&mutex_timer);
+        sleep(1); // let the user the time to take the mutex
+    }
+    pthread_exit(NULL);
 }

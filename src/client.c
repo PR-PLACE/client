@@ -7,6 +7,7 @@
 #include "include/types.h"
 
 extern int shmid;
+extern pthread_mutex_t mutex_timer;
 
 int main(int argc, char **argv)
 {
@@ -14,12 +15,22 @@ int main(int argc, char **argv)
     addClient();
 
     drawMap();
+    pthread_t thread_timer = createTimer();
 
-    pixel_t pixel = enterPixel();
-    printf("pixel entered : x = %d, y = %d, color : %d\n", pixel.abscissa, pixel.ordinate, pixel.color);
+    while (1)
+    {
+        pthread_mutex_lock(&mutex_timer);
+        pixel_t pixel = enterPixel();
+        placePixel(pixel);
+        pthread_mutex_unlock(&mutex_timer);
+        sleep(1); // let the thread timer the time to take the mutex
+    }
+
     // infoShm();
     removeClient();
     // infoShm();
     printf("shmid = %d\n", shmid);
+
+    pthread_join(thread_timer, NULL);
     return 0;
 }

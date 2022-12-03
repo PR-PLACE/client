@@ -1,5 +1,5 @@
 
-
+#include <pthread.h>
 #include "libmap.h"
 #ifndef INCLUDE_LIB
 #define INCLUDE_LIB 1
@@ -45,4 +45,15 @@ int readNumber();
  */
 void _testPixelCoord(pixel_t **pixel);
 
+/**
+ * Function creating the timer and the thread associated
+ * @returns pthread_t : the thread created
+ */
+pthread_t createTimer();
+
+/**
+ * Routine of the timer thread
+ * @param void* arg : the time the user has to wait before putting a pixel
+ */
+void *_threadTimer(void *arg);
 #endif
