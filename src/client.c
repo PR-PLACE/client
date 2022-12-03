@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     // printMap(map);
 
     pixel_t pixel = enterPixel();
-    printf("pixel entered : x = %d, y = %d\n", pixel.abscissa, pixel.ordinate);
+    printf("pixel entered : x = %d, y = %d, color : %d\n", pixel.abscissa, pixel.ordinate, pixel.color);
     // infoShm();
     removeClient();
     // infoShm();

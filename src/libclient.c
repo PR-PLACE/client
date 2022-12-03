@@ -7,6 +7,7 @@
 #include <string.h>
 #include "include/libmap.h"
 
+
 key_t key;
 int shmid;
 
@@ -134,21 +135,22 @@ void _testPixelCoord(pixel_t **pixel)
 
 int readNumber()
 {
-    char carac = ' ';
-    char string_length = 1;
-    char *number_as_string = (char *)malloc(sizeof(char));
-    *number_as_string = '\0';
-    while (carac != 27 && carac != '\n')
-    {
-        carac = getchar();
-        string_length++;
-        number_as_string = realloc(number_as_string, string_length * sizeof(char));
-        number_as_string[string_length - 2] = carac;
-        number_as_string[string_length - 1] = '\0';
-    }
-    fflush(stdin);
-    if (carac == 27)
+    char number1;
+    char number2;
+    number1 = getchar();
+    if(number1 == 27){
+        getchar();
         return -1;
+    }       
     else
-        return atoi(number_as_string);
+        number2 = getchar();
+        if(number2 == 27)
+            return -1;
+        else if(number2 == '\n')
+            return number1 - '0';
+        else{
+            getchar();
+            int number = (number1 - '0') * 10 + (number2 - '0');
+            return number;
+        }
 }
