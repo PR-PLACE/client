@@ -8,19 +8,18 @@
 #define MAP_FILE_NAME "../maps/map.bin"
 #define printColoredChar(color) (printf("\033[38;5;%dm██\033[0m", color))
 
-#define printColoredChar(color) (printf("\033[38;5;%dm██\033[0m", color))
 
 typedef enum
 {
-    BLEUE = 12,
-    ROUGE = 9,
-    VERT = 10,
-    JAUNE = 11,
-    NOIR = 0,
-    BLANC = 15,
-    MAUVE = 13,
-    VIOLET = 5,
-    MARRON = 130,
+    BLUE = 12,
+    RED = 9,
+    GREEN = 10,
+    YELLOW = 11,
+    BLACK = 0,
+    WHITE = 15,
+    LIGHT_PURPLE = 13,
+    PURPLE = 5,
+    BROWN = 130,
     ORANGE = 214,
 } color;
 
@@ -33,14 +32,13 @@ typedef struct pixel_t
 
 #define COLOR_NUMBER 10
 
-static color colors[COLOR_NUMBER] = {BLEUE, ROUGE, VERT, JAUNE, NOIR, BLANC, MAUVE, VIOLET, MARRON, ORANGE};
+static color colors[COLOR_NUMBER] = {BLUE, RED, GREEN, YELLOW, BLACK, WHITE, LIGHT_PURPLE, PURPLE, BROWN, ORANGE};
 typedef color map_t[HEIGHT][WIDTH];
 
-void readMap(color map[HEIGHT][WIDTH]);
-void printMap(color map[HEIGHT][WIDTH]);
-void drawMap();
-void placePixel(int x, int y, color newColor);
-void exportMap(color map[HEIGHT][WIDTH]);
+void readMap(map_t *map);
+void printMap(map_t *map);
+void drawMap(map_t *map);
+void placePixel(pixel_t *pixel, map_t map);
+void exportMap(map_t map);
 int isColor(color color);
-
 #endif

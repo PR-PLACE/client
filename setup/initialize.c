@@ -17,14 +17,13 @@ int main(int argc, char const *argv[])
     {
         for (int j = 0; j < WIDTH; j++)
         {
-            map[j][i] = BLANC;
+            map[j][i] = WHITE;
         }
     }
     exportMap(map);
 
     // Initialize the named semaphore
-    sem_t *sem;
-    sem = sem_open(SEMAPHORE_NAME, O_CREAT, SEMAPHORE_PERMISSIONS, 1);
+    sem_open(SEMAPHORE_NAME, O_CREAT, SEMAPHORE_PERMISSIONS, 1);
 
     return 0;
 }
