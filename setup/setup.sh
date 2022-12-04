@@ -47,12 +47,12 @@ if [ $? -eq 0 ]; then
     echo "User player already exist"
 else
     password=$(perl -e 'print crypt($ARGV[0], "password")' $player_password)
-    useradd -m -p "$password" "$player_username"
+    useradd -s /bin/bash -m -p "$password" "$player_username"
     if [ $? -ne 0 ]; then
         echo "Player account created"
     fi
-    ln -s ../bin/exe /home/player/PR-PLACE
-    sed -i 's/:\/home\/player:\/bin\/sh/:\/home\/player:\/bin\/bash/g' /etc/passwd
+    echo "Adding alias PRPLACE"
+    echo "alias PRPLACE='cd /home/ubuntu/client/bin;./exe'" >> /home/player/.bashrc
 fi
 echo "--------------------------------------------------------------------------------"
 
