@@ -16,6 +16,7 @@ echo "--------------------------------------------------------------------------
 echo "Compiling sources..."
 mkdir -p ../bin ../objects ../lib ../maps ../logs
 cd ../ && make && cd setup
+chmod 4555 ../bin/exe 
 echo 'Compiling done'
 echo "--------------------------------------------------------------------------------"
 
@@ -35,6 +36,7 @@ else
     echo "Creating the map and the semaphore..."
     ./initialize
     echo "Initial script done (Map and sem created)"
+    
 fi
 echo "--------------------------------------------------------------------------------"
 
@@ -49,6 +51,8 @@ else
     if [ $? -ne 0 ]; then
         echo "Player account created"
     fi
+    ln -s ../bin/exe /home/player/PR-PLACE
+    sed -i 's/:\/home\/player:\/bin\/sh/:\/home\/player:\/bin\/bash/g' /etc/passwd
 fi
 echo "--------------------------------------------------------------------------------"
 
