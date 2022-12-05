@@ -57,7 +57,6 @@ void handler(int sig_number)
     switch (sig_number)
     {
     case SIGUSR1:
-        printf("Received SIGUSR1 to update the map\n");
         readMap(map);
         if(isTimerRunning == 0 && isPlacingPixel == 0){
             pthread_cancel(threadPixel);
