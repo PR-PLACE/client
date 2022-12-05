@@ -47,6 +47,7 @@ void setupSignalHandler()
     CHECK(sigaction(SIGINT, &newact, NULL), "Error setting up signal handler for SIGINT");
     CHECK(sigaction(SIGTERM, &newact, NULL), "Error setting up signal handler for SIGTERM");
     CHECK(sigaction(SIGHUP, &newact, NULL), "Error setting up signal handler for SIGHUP");
+    CHECK(sigaction(SIGSEGV, &newact, NULL), "Error setting up signal handler for SIGSEGV");
 }
 
 void handler(int sig_number)
@@ -63,6 +64,7 @@ void handler(int sig_number)
         break;
     case SIGTERM:
     case SIGHUP:
+    case SIGSEGV:
     case SIGINT:
         removeClient();
         exit(0);
@@ -144,6 +146,7 @@ void placePixelSequence()
         pixel = enterPixel();
     while (pixel.abscissa == -1 && pixel.ordinate == -1);
     placePixel(&pixel, *map);
+
     pthread_cond_signal(&cond_for_timer);
     broadCastUpdate();
     pthread_cond_wait(&cond_for_pixel, &mutex_for_pixel);

@@ -1,8 +1,8 @@
 #ifndef INCLUDE_LIBMAP
 #define INCLUDE_LIBMAP 1
 
-#define WIDTH 50
-#define HEIGHT WIDTH
+#define WIDTH 100
+#define HEIGHT 50
 #define NB_COLORS 10
 
 #define MAP_FILE_NAME "../maps/map.bin"
