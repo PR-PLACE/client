@@ -17,6 +17,7 @@ int shmid;
 
 char is_timer_running = 0;
 char is_placing_pixel = 0;
+char timer_need_to_be_refresh = 0;
 
 map_t *map;
 
@@ -56,8 +57,8 @@ void handler(int sig_number)
         readMap(map);
         if( is_timer_running == 0 && is_placing_pixel == 0){
             pthread_cancel(thread_pixel);
-        }else if(isTimerRunning == 1){
-            timerNeedToRefresh = 1;
+        }else if(is_timer_running == 1){
+            timer_need_to_be_refresh = 1;
         }
         break;
     case SIGTERM:
@@ -105,11 +106,11 @@ void *cooldownTimer(void *arg)
 {
     while (!pthread_cond_wait(&cond_for_timer, &mutex_for_timer))
     {
-        isTimerRunning = 1;
+        is_timer_running = 1;
         for (int timer = PIXEL_COOLDOWN; timer > 0; timer--)
         {
-            if(timerNeedToRefresh == 1){
-                timerNeedToRefresh = 0;
+            if(timer_need_to_be_refresh == 1){
+                timer_need_to_be_refresh = 0;
                 drawMap(map);
                 PRINT_TABS(2);
                 printf("\033[1;38;5;%dm[Cooldown: \033[0m", GREEN);
@@ -126,8 +127,8 @@ void *cooldownTimer(void *arg)
             sleep(1);
         }
         printf("]\n");
-        isTimerRunning = 0;
-        pthread_cond_signal(&condForPixel);
+        is_timer_running = 0;
+        pthread_cond_signal(&cond_for_pixel);
     }
 }
 
