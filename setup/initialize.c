@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
     {
         for (int j = 0; j < WIDTH; j++)
         {
-            map[j][i] = WHITE;
+            map[i][j] = WHITE;
         }
     }
     exportMap(map);
