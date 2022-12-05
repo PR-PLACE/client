@@ -20,6 +20,7 @@
 
 #define PIXEL_COOLDOWN 10
 
+
 typedef struct client_list_t
 {
     int nb_client;
