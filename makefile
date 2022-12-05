@@ -4,7 +4,7 @@ SOURCE_DIR = src
 SETUP_DIR = setup
 INCLUDE_DIR = src/include
 LIBRARY_DIR = lib
-# FLAGS = -Wall
+FLAGS = -Wall
 
 all: setup_map_sem client
 

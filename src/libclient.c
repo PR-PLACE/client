@@ -11,32 +11,27 @@
 #include <string.h>
 #include "include/libmap.h"
 
-
 key_t key;
 int shmid;
 
-char isTimerRunning = 0;
-char isPlacingPixel = 0;
+char is_timer_running = 0;
+char is_placing_pixel = 0;
 
 map_t *map;
 
+pthread_mutex_t mutex_for_timer = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex_for_pixel = PTHREAD_MUTEX_INITIALIZER;
 
-pthread_mutex_t mutexForTimer = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t mutexForPixel = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond_for_timer = PTHREAD_COND_INITIALIZER;
+pthread_cond_t cond_for_pixel = PTHREAD_COND_INITIALIZER;
+pthread_t thread_timer;
+pthread_t thread_pixel;
 
-//Create a cond wait
-pthread_cond_t condForTimer = PTHREAD_COND_INITIALIZER;
-pthread_cond_t condForPixel = PTHREAD_COND_INITIALIZER;
-pthread_t threadTimer;
-pthread_t threadPixel;
-
-void setupMap(){
+void setupMap()
+{
     map = (map_t *)malloc(sizeof(map_t));
     readMap(map);
-
 }
-
-// Signal handling
 
 void setupSignalHandler()
 {
@@ -58,8 +53,9 @@ void handler(int sig_number)
     {
     case SIGUSR1:
         readMap(map);
-        if(isTimerRunning == 0 && isPlacingPixel == 0){
-            pthread_cancel(threadPixel);
+        if (is_timer_running == 0 && is_placing_pixel == 0)
+        {
+            pthread_cancel(thread_pixel);
         }
         break;
     case SIGTERM:
@@ -73,20 +69,17 @@ void handler(int sig_number)
     }
 }
 
-
-void broadCastUpdate(){
+void broadCastUpdate()
+{
     client_list_t *client_list = (client_list_t *)shmat(shmid, NULL, SHM_FLAG);
     int nb_client = client_list->nb_client;
     printf("nb_client : %d\n", nb_client);
-    for (char i = 0; i < nb_client; i++)
+    for (int i = 0; i < nb_client; i++)
     {
         kill(client_list->client_list[i], SIGUSR1);
     }
     shmdt(client_list);
 }
-
-//--------------------------------------------------------------------------------------------
-
 
 void *placePixelThread(void *arg)
 {
@@ -95,55 +88,54 @@ void *placePixelThread(void *arg)
     placePixelSequence();
     pthread_exit(NULL);
 }
-void createThreadPixel(){
-    isPlacingPixel = 0;
-    pthread_create(&threadPixel, NULL, &placePixelThread, NULL);
+
+void createThreadPixel()
+{
+    is_placing_pixel = 0;
+    pthread_create(&thread_pixel, NULL, &placePixelThread, NULL);
 }
 
-void waitForThreadPixel(){
-    pthread_join(threadPixel, NULL);
+void waitForThreadPixel()
+{
+    pthread_join(thread_pixel, NULL);
 }
 
-
-/*
-Thread function of cooldown timer after placed pixel
-*/
 void *cooldownTimer(void *arg)
 {
-   while (!pthread_cond_wait(&condForTimer, &mutexForTimer))
+    while (!pthread_cond_wait(&cond_for_timer, &mutex_for_timer))
     {
-        isTimerRunning = 1;
-        for (int timer = 10; timer > 0; timer--)
+        is_timer_running = 1;
+        for (int timer = PIXEL_COOLDOWN; timer > 0; timer--)
         {
             drawMap(map);
             PRINT_TABS(5);
-            printf("\033[1;38;5;%dmCooldown: %d\033[0m\n", GREEN, timer);
+            printf("\033[1;38;5;%dmCooldown: [%d s]\033[0m\n", GREEN, timer);
             sleep(1);
         }
-        isTimerRunning = 0;
-        pthread_cond_signal(&condForPixel);
+        is_timer_running = 0;
+        pthread_cond_signal(&cond_for_pixel);
     }
 }
 
 void setupThread()
 {
-    CHECK(pthread_create(&threadTimer, NULL, &cooldownTimer, NULL), "Error creating thread");
+    CHECK(pthread_create(&thread_timer, NULL, &cooldownTimer, NULL), "Error creating thread");
 }
 
 void placePixelSequence()
 {
     pixel_t pixel;
-    do pixel = enterPixel();
+    do
+        pixel = enterPixel();
     while (pixel.abscissa == -1 && pixel.ordinate == -1);
     placePixel(&pixel, *map);
-    pthread_cond_signal(&condForTimer);
+    pthread_cond_signal(&cond_for_timer);
     broadCastUpdate();
-    pthread_cond_wait(&condForPixel, &mutexForPixel);
+    pthread_cond_wait(&cond_for_pixel, &mutex_for_pixel);
 }
 
 void loadShm()
 {
-    printf("filename : %s\n", SHARED_MEMORY_FILE);
     key = ftok(SHARED_MEMORY_FILE, PROJECT_ID);
     CHECK(key, "error ftok");
     shmid = shmget(key, sizeof(client_list_t), SHM_FLAG);
@@ -166,7 +158,7 @@ void infoShm()
 
     client_list_t *client_list = (client_list_t *)shmat(shmid, NULL, SHM_FLAG);
     printf("Number of clients : %d \n", client_list->nb_client);
-    for (char i = 0; i < client_list->nb_client; i++)
+    for (int i = 0; i < client_list->nb_client; i++)
     {
         printf("Client : %d\n", client_list->client_list[i]);
     }
@@ -190,12 +182,12 @@ void removeClient()
     client_list_t *client_list = (client_list_t *)shmat(shmid, NULL, SHM_FLAG);
     int nb_client = client_list->nb_client;
 
-    for (char i = 0; i < nb_client; i++)
+    for (int i = 0; i < nb_client; i++)
     {
         if (client_list->client_list[i] == pid)
         {
             // shifting of clients
-            for (char j = i; j < nb_client; j++)
+            for (int j = i; j < nb_client; j++)
                 client_list->client_list[j] = client_list->client_list[j + 1];
             client_list->nb_client -= 1;
             client_list->client_list[client_list->nb_client] = 0;
@@ -212,9 +204,9 @@ pixel_t enterPixel()
     client_list_t *client_list = (client_list_t *)shmat(shmid, NULL, SHM_FLAG);
     int nb_client = client_list->nb_client;
     PRINT_TABS(1);
-    printf("\033[1;38;5;%dmPlayers online\033[0m -> %d\n", PURPLE,nb_client);
+    printf("\033[1;38;5;%dmPlayers online\033[0m -> %d\n", PURPLE, nb_client);
     PRINT_TABS(4);
-    printf("\033[1;38;5;%dm------Enter a pixel------\033[0m\n",ORANGE);
+    printf("\033[1;38;5;%dm------Enter a pixel------\033[0m\n", ORANGE);
     PRINT_TABS(1);
     PRINTF_COLOR("Column : ", GREEN);
     pixel->abscissa = readNumber();
@@ -224,7 +216,7 @@ pixel_t enterPixel()
         return *pixel;
     }
     PRINT_TABS(1);
-    PRINTF_COLOR("LINE : ", GREEN);
+    PRINTF_COLOR("Line : ", GREEN);
     pixel->ordinate = readNumber();
     if (pixel->ordinate == -1)
     {
@@ -235,7 +227,7 @@ pixel_t enterPixel()
     _testPixelCoord(&pixel);
     PRINT_TABS(2);
     PRINTF_COLOR("Colors : ", 8);
-    for (char i = 0; i < COLOR_NUMBER; i++)
+    for (int i = 0; i < COLOR_NUMBER; i++)
     {
         printf("%d-", i);
         printColoredChar(colors[i]);
@@ -273,21 +265,24 @@ void _testPixelCoord(pixel_t **pixel)
 int readNumber()
 {
     char number1;
-    char number2;    
+    char number2;
 
     number1 = getchar();
-    isPlacingPixel = 1;
-    if(number1 == 27){
+    is_placing_pixel = 1;
+    if (number1 == 27)
+    {
         getchar();
         return -1;
-    }       
-    else{
+    }
+    else
+    {
         number2 = getchar();
-        if(number2 == 27)
+        if (number2 == 27)
             return -1;
-        else if(number2 == '\n')
+        else if (number2 == '\n')
             return number1 - '0';
-        else{
+        else
+        {
             getchar();
             int number = (number1 - '0') * 10 + (number2 - '0');
             return number;

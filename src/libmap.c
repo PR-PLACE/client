@@ -3,7 +3,6 @@
 #include <time.h>
 #include "./include/libmap.h"
 
-
 // get random color of the enum
 
 color getRandomColor()
@@ -22,8 +21,6 @@ void printColumNumber()
     }
     printf("\033[0m\n");
 }
-
-
 
 void updateMap(map_t map, int x, int y, color newColor)
 {
@@ -87,9 +84,9 @@ void readMap(map_t *map)
 
 int isColor(color color)
 {
-    for (char i = 0; i < COLOR_NUMBER; i++)
+    for (int i = 0; i < COLOR_NUMBER; i++)
         if (color == colors[i])
             return 1;
-    
+
     return 0;
 }
