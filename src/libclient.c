@@ -17,6 +17,7 @@ int shmid;
 
 char isTimerRunning = 0;
 char isPlacingPixel = 0;
+char timerNeedToRefresh = 0;
 
 map_t *map;
 
@@ -60,6 +61,8 @@ void handler(int sig_number)
         readMap(map);
         if(isTimerRunning == 0 && isPlacingPixel == 0){
             pthread_cancel(threadPixel);
+        }else if(isTimerRunning == 1){
+            timerNeedToRefresh = 1;
         }
         break;
     case SIGTERM:
@@ -77,7 +80,6 @@ void handler(int sig_number)
 void broadCastUpdate(){
     client_list_t *client_list = (client_list_t *)shmat(shmid, NULL, SHM_FLAG);
     int nb_client = client_list->nb_client;
-    printf("nb_client : %d\n", nb_client);
     for (char i = 0; i < nb_client; i++)
     {
         kill(client_list->client_list[i], SIGUSR1);
@@ -113,13 +115,26 @@ void *cooldownTimer(void *arg)
    while (!pthread_cond_wait(&condForTimer, &mutexForTimer))
     {
         isTimerRunning = 1;
-        for (int timer = 10; timer > 0; timer--)
+        for (int timer = PIXEL_COOLDOWN; timer > 0; timer--)
         {
-            drawMap(map);
-            PRINT_TABS(5);
-            printf("\033[1;38;5;%dmCooldown: %d\033[0m\n", GREEN, timer);
+            if(timerNeedToRefresh == 1){
+                timerNeedToRefresh = 0;
+                drawMap(map);
+                PRINT_TABS(2);
+                printf("\033[1;38;5;%dm[Cooldown: \033[0m", GREEN);
+                for (char j = PIXEL_COOLDOWN; j > timer; j--)
+                    printf("\033[1;38;5;%dm%d...\033[0m", GREEN, j);
+            }
+            if(timer == 10){
+                PRINT_TABS(2);
+                printf("\033[1;38;5;%dm[Cooldown: %d...\033[0m", GREEN, timer);
+            }
+            else
+                printf("\033[1;38;5;%dm%d...\033[0m", GREEN, timer);
+            fflush(stdout);
             sleep(1);
         }
+        printf("]\n");
         isTimerRunning = 0;
         pthread_cond_signal(&condForPixel);
     }
@@ -207,12 +222,13 @@ void removeClient()
 
 pixel_t enterPixel()
 {
-    int choice;
+    char choice;
     pixel_t *pixel = malloc(sizeof(pixel_t));
     client_list_t *client_list = (client_list_t *)shmat(shmid, NULL, SHM_FLAG);
     int nb_client = client_list->nb_client;
     PRINT_TABS(1);
-    printf("\033[1;38;5;%dmPlayers online\033[0m -> %d\n", PURPLE,nb_client);
+    PRINTF_COLOR("Players online : ", PURPLE);
+    printf("%d\n", nb_client);
     PRINT_TABS(4);
     printf("\033[1;38;5;%dm------Enter a pixel------\033[0m\n",ORANGE);
     PRINT_TABS(1);
@@ -224,7 +240,7 @@ pixel_t enterPixel()
         return *pixel;
     }
     PRINT_TABS(1);
-    PRINTF_COLOR("LINE : ", GREEN);
+    PRINTF_COLOR("Line : ", GREEN);
     pixel->ordinate = readNumber();
     if (pixel->ordinate == -1)
     {
@@ -244,14 +260,13 @@ pixel_t enterPixel()
     printf("\n");
     PRINT_TABS(1);
     printf("Color: ");
-    scanf("%d", &choice);
+    choice = getchar();
     getchar();
-    pixel->color = colors[choice];
-    if (!isColor(pixel->color))
-    {
-        // we set a default value
+    if(choice > '9' && choice < '0' )
         pixel->color = ORANGE;
-    }
+    else
+        pixel->color = colors[choice - '0'];
+
     return *pixel;
 }
 
