@@ -49,6 +49,7 @@ void setupSignalHandler()
     CHECK(sigaction(SIGUSR1, &newact, NULL), "Error setting up signal handler for SIGUSR1");
     CHECK(sigaction(SIGINT, &newact, NULL), "Error setting up signal handler for SIGINT");
     CHECK(sigaction(SIGTERM, &newact, NULL), "Error setting up signal handler for SIGTERM");
+    CHECK(sigaction(SIGHUP, &newact, NULL), "Error setting up signal handler for SIGHUP");
 }
 
 void handler(int sig_number)
@@ -63,6 +64,7 @@ void handler(int sig_number)
         }
         break;
     case SIGTERM:
+    case SIGHUP:
     case SIGINT:
         removeClient();
         exit(0);
