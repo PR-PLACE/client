@@ -1,7 +1,7 @@
 #ifndef INCLUDE_LIBMAP
 #define INCLUDE_LIBMAP 1
 
-#define WIDTH 100
+#define WIDTH 99
 #define HEIGHT 50
 #define NB_COLORS 10
 
